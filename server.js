@@ -10,9 +10,24 @@ const io = socketio(server);
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Run when client connection
+// Run when client connection.
 io.on('connection', socket => {
-  socket.emit('message','Welcome the chat cort');
+
+  // Welcome current user.
+  socket.emit('message','Welcome the ChatCord!');
+
+  // Broadcast when a user connects.
+  socket.broadcast.emit('message','A user has joined the chat.');
+    
+  // Runs when client disconnects.
+  socket.on('disconnect',() => {
+    io.emit('message','A suer has left the chat');
+  });
+
+  // Listen for chat messages
+  socket.on('chatMessage', msg => {
+    io.emit('message' , msg);
+  });
 });
 
 const PORT = process.env.PORT || 3000;
