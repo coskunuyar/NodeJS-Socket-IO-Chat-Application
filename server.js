@@ -23,6 +23,10 @@ io.on('connection', socket => {
     socket.broadcast
           .to(user.room)
           .emit('message',formatMessage(botName,`${user.username} has joined the chat.`));
+    io.to(user.room).emit('roomUsers',{
+      room: user.room,
+      users: getRoomUsers(user.room)
+    });
   });
 
 
@@ -38,6 +42,10 @@ io.on('connection', socket => {
     const user = userLeave(socket.id);
     if(user){
       io.to(user.room).emit('message',formatMessage(botName,`${user.username} has left the chat`));
+      io.to(user.room).emit('roomUsers',{
+        room: user.room,
+        users: getRoomUsers(user.room)
+      });
     }
   });
 });
